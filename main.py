@@ -137,6 +137,7 @@ wea, high, low, wind = get_weather()
 
 data = {
     "date": {"value": toDate},
+    "toWeek": {"value": toWeek},
     "city": {"value": city},
     "weather": {"value": wea},
     "high": {"value": str(high)},
