@@ -45,6 +45,10 @@ bd = datetime.strptime(birthday, "%Y-%m-%d")
 
 toDate = str(td.month)+"月"+str(td.day)+"日"
 
+week_list = ["星期一","星期二","星期三","星期四","星期五","星期六","星期日"]
+
+toWeek = week_list[td.weekday()]
+
 def get_weather():
     url = "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city=" + city
     res = requests.get(url).json()
@@ -152,12 +156,14 @@ for i in userList:
 
 #
 # print(
+#     "日期" + toDate + " " + toWeek + "\n" +
+#     city + "今日" +
 #     "天气" + wea + "\n" +
 #     "最高气温：" + str(high) + "\n" +
 #     "最低气温：" + str(low) + "\n" +
 #     "wind" + str(wind) + "\n" +
-#     "认识的天数：", get_count() + "\n" +
-#     get_birthday() + "\n" +
+#     "认识的天数：", get_count(), "\n" +
+#     str(get_birthday()) + "\n" +
 #     say()
 # )
 
