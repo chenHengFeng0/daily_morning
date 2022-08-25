@@ -6,30 +6,38 @@ import requests
 import os
 import random
 
+
 app_id = os.environ["APP_ID"]
 app_secret = os.environ["APP_SECRET"]
+# 模板ID
+template_id = os.environ["TEMPLATE_ID"]
+# 用户ID
+user_id = os.environ["USER_ID"]
+#把 user_id 转换成数组
+userList = user_id.split(",")
+#今天的日期
+today = datetime.now().strftime("%Y-%m-%d")
+#开始日期
+start_date = os.environ['START_DATE']
+#城市
+city = os.environ['CITY']
+#生日
+birthday = os.environ['BIRTHDAY']
 
-template_id = os.environ["TEMPLATE_ID"]             # 模板ID
-user_id = os.environ["USER_ID"]                     # 用户ID
-userList = user_id.split(",")                           #把 user_id 转换成数组
 
-today = datetime.now().strftime("%Y-%m-%d")         #今天的日期
-start_date = os.environ['START_DATE']               #开始日期
-city = os.environ['CITY']                           #城市
-birthday = os.environ['BIRTHDAY']                   #生日
-
-#
-#
 # app_id = "wxaa57ccc2ffea23bc"
 # app_secret = "654f53177e70d14e25b19e764b9f2ba1"
+#
+# template_id = "4L7c64FszgKmFd5hlR5vyQYa4zAtcGMy9ws61W6biiQ"
+#
+# user_id = "oV2R76PUmhE1KCiN1AZ_At9NQFhI,oV2R76KnAJd6LJFlRjOwpTd4QxzI"
+# userList = user_id.split(",")
 #
 # today = datetime.now().strftime("%Y-%m-%d")
 # start_date = '2017-09-01'
 # city = "武汉"
 # birthday = '1999-07-10'
-# user_id = "oV2R76PUmhE1KCiN1AZ_At9NQFhI,oV2R76KnAJd6LJFlRjOwpTd4QxzI"
-# list = user_id.split(",")
-# template_id = "4L7c64FszgKmFd5hlR5vyQYa4zAtcGMy9ws61W6biiQ"
+
 
 td = datetime.strptime(today, "%Y-%m-%d")
 sd = datetime.strptime(start_date, "%Y-%m-%d")
