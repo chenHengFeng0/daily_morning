@@ -6,48 +6,165 @@ import requests
 import os
 import random
 
-today = datetime.strptime(str(datetime.now()),"%Y-%m-%d")
-start_date = os.environ['START_DATE']
-city = os.environ['CITY']
-birthday = os.environ['BIRTHDAY']
+# today = datetime.now().strftime("%Y-%m-%d")
+# start_date = os.environ['START_DATE']
+# city = os.environ['CITY']
+# birthday = os.environ['BIRTHDAY']
+#
+# app_id = os.environ["APP_ID"]
+# app_secret = os.environ["APP_SECRET"]
+#
+# user_id = os.environ["USER_ID"]
+# template_id = os.environ["TEMPLATE_ID"]
+# say = os.environ["SAY"]
 
-app_id = os.environ["APP_ID"]
-app_secret = os.environ["APP_SECRET"]
+app_id = "wxaa57ccc2ffea23bc"
+app_secret = "654f53177e70d14e25b19e764b9f2ba1"
 
-user_id = os.environ["USER_ID"]
-template_id = os.environ["TEMPLATE_ID"]
+today = datetime.now().strftime("%Y-%m-%d")
+start_date = '2017-09-01'
+city = "武汉"
+birthday = '1999-07-10'
+user_id = "oV2R76PUmhE1KCiN1AZ_At9NQFhI"
 
+template_id = "4L7c64FszgKmFd5hlR5vyQYa4zAtcGMy9ws61W6biiQ"
+
+td = datetime.strptime(today, "%Y-%m-%d")
+sd = datetime.strptime(start_date, "%Y-%m-%d")
+bd = datetime.strptime(birthday, "%Y-%m-%d")
+
+toDate = str(td.month)+"月"+str(td.day)+"日"
 
 def get_weather():
-  url = "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city=" + city
-  res = requests.get(url).json()
-  weather = res['data']['list'][0]
-  return weather['weather'], math.floor(weather['temp'])
+    url = "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city=" + city
+    res = requests.get(url).json()
+    weather = res['data']['list'][0]
+    return weather['weather'], weather['high'], weather['low'], weather['wind']
+
 
 def get_count():
-  delta = today - datetime.strptime(start_date, "%Y-%m-%d")
-  return delta.days
+    delta = td - sd
+    return delta.days
+
 
 def get_birthday():
-  next = datetime.strptime(str(date.today().year) + "-" + birthday, "%Y-%m-%d")
-  if next < datetime.now():
-    next = next.replace(year=next.year + 1)
-  return (next - today).days
+    next_year = int(td.year) + 1
+    nextBd = datetime.strptime(str(next_year) + "-" + str(bd.month) + "-" + str(bd.day), "%Y-%m-%d")  # 明年的生日
+    thisBd = datetime.strptime(str(int(td.year)) + "-" + str(bd.month) + "-" + str(bd.day), "%Y-%m-%d")  # 今年的生日
+    if thisBd == td:
+        return "远方的我一直在掂念着你，祝你生日快乐。"
+    elif td > thisBd:
+        d = nextBd - td
+        return "距离你的生日还有"+str(d.days)+"天"
+    elif thisBd > td:
+        d = thisBd - td
+        return "距离你的生日还有"+str(d.days)+"天"
+
+
+def get_qingShi():
+    url = "http://api.tianapi.com/qingshi/index?key=5b6cd616d69d7560b1680d54abbaa82c"
+    res = requests.get(url).json()
+    qingShi = res['newslist'][0]
+    return qingShi['content']
+
+
+def get_saylove():
+    url = "http://api.tianapi.com/saylove/index?key=5b6cd616d69d7560b1680d54abbaa82c"
+    res = requests.get(url).json()
+    saylove = res['newslist'][0]
+    return saylove['content']
+
 
 def get_words():
-  words = requests.get("https://api.shadiao.pro/chp")
-  if words.status_code != 200:
-    return get_words()
-  return words.json()['data']['text']
+    url = "https://api.shadiao.pro/chp"
+    res = requests.get(url).json()
+    caiHongPi = res['data']
+    return caiHongPi['text']
+
+
+# 判断是否为质数
+def zhiShu(num):
+    if num > 1:
+        # 查看因子
+        for i in range(2, num):
+            if (num % i) == 0:
+                # print(num, "不是质数")
+                # print(i, "乘于", num // i, "是", num)
+                return 0
+        else:
+            # print(num, "是质数")
+            return 1
+
+    # 如果输入的数字小于或等于 1，不是质数
+    else:
+        # print(num, "不是质数")
+        return 0
+
+
+def say():
+    num = random.randint(1, 10)
+
+    if zhiShu(num) == 1:
+        return get_words()
+    elif num % 2 == 0:
+        return get_qingShi()
+    else:
+        return get_saylove()
+
 
 def get_random_color():
-  return "#%06x" % random.randint(0, 0xFFFFFF)
+    return "#%06x" % random.randint(0, 0xFFFFFF)
 
 
 client = WeChatClient(app_id, app_secret)
 
 wm = WeChatMessage(client)
-wea, temperature = get_weather()
-data = {"weather":{"value":wea},"temperature":{"value":temperature},"love_days":{"value":get_count()},"birthday_left":{"value":get_birthday()},"words":{"value":get_words(), "color":get_random_color()}}
+wea, high, low, wind = get_weather()
+
+data = {
+    "date": {"value": toDate},
+    "city": {"value": city},
+    "weather": {"value": wea},
+    "high": {"value": str(high)},
+    "low": {"value": str(low)},
+    "wind": {"value": str(wind)},
+    "love_days": {"value": get_count()},
+    "birthday_left": {"value": str(get_birthday())},
+    "words": {"value": say(),
+              "color": get_random_color()}
+}
+
 res = wm.send_template(user_id, template_id, data)
-print(res)
+
+#
+# print(
+#     "天气" + wea + "\n" +
+#     "最高气温：" + str(high) + "\n" +
+#     "最低气温：" + str(low) + "\n" +
+#     "wind" + str(wind) + "\n" +
+#     "认识的天数：", get_count() + "\n" +
+#     get_birthday() + "\n" +
+#     say()
+# )
+
+
+
+# if __name__ == '__main__':
+#
+#     print(get_count())
+
+# def bo():
+#     next_year = int(td.year) + 1
+#     nextBd = datetime.strptime(str(next_year) + "-" + str(bd.month) + "-" + str(bd.day),"%Y-%m-%d")  # 明年的生日
+#     thisBd = datetime.strptime(str(int(td.year)) + "-" + str(bd.month) + "-" + str(bd.day),"%Y-%m-%d")  # 今年的生日
+#     print(nextBd)
+#     print(thisBd)
+#
+#     if thisBd == td:
+#         return "生日快乐"
+#     elif td > thisBd:
+#         d = nextBd - td
+#         return "距离生日还有：" + str(d.days) + "天"
+#     elif thisBd > td:
+#         d = thisBd - td
+#         return "距离生日还有：" + str(d.days) + "天"
