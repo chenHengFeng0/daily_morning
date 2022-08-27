@@ -19,7 +19,7 @@ template_id = os.environ["TEMPLATE_ID"]
 user_id = os.environ["USER_ID"]
 
 # 天行API我的密钥KEY
-txApiKey = os.environ["TXAPI_KEY"]
+txApiKey = "5b6cd616d69d7560b1680d54abbaa82c"
 
 # 把 user_id 以英文逗号分隔并转换成数组
 userList = user_id.split(",")
