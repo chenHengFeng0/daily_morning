@@ -19,7 +19,7 @@ template_id = os.environ["TEMPLATE_ID"]
 user_id = os.environ["USER_ID"]
 
 # 天行API我的密钥KEY
-api_key = os.environ["TXAPI_KEY"]
+txApiKey = os.environ["TXAPI_KEY"]
 
 # 把 user_id 以英文逗号分隔并转换成数组
 userList = user_id.split(",")
@@ -80,7 +80,7 @@ def get_qingShi():
     # "http://api.tianapi.com/qingshi/index" 替换为自己申请的API地址
     # 请求示例：http://api.tianapi.com/qingshi/index?key=APIKEY
     
-    url = "http://api.tianapi.com/qingshi/index?key=" + api_key
+    url = "http://api.tianapi.com/qingshi/index?key=" + txApiKey
     res = requests.get(url).json()
     qingShi = res['newslist'][0]
     return qingShi['content']
@@ -89,7 +89,7 @@ def get_qingShi():
 # 情话
 def get_saylove():
     # "http://api.tianapi.com/saylove/index" 替换为自己申请的接口地址
-    url = "http://api.tianapi.com/saylove/index?key=" + api_key
+    url = "http://api.tianapi.com/saylove/index?key=" + txApiKey
     res = requests.get(url).json()
     saylove = res['newslist'][0]
     return saylove['content']
